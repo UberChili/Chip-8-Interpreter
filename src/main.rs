@@ -70,15 +70,6 @@ impl Chip8 {
             };
             self.pc += 2;
 
-            // test print instruction
-            // let instruction: u16 = u16::from_be_bytes(opcode);
-            // println!("Instruction at pc {:X}: {:X}", self.pc, instruction);
-            // println!(
-            //     "Instruction at pc {:X}: {:X} {:X}",
-            //     self.pc, &opcode[0], &opcode[1]
-            // );
-
-            // Decode the instruction
             // Decode the instruction
             match opcode {
                 [0x00, 0xE0] => println!("Clear screen!"),
@@ -98,7 +89,8 @@ impl Chip8 {
                     let addr = ((first as u16 & 0x0F) << 8) | second as u16;
                     println!("Set I = {:03X}", addr);
                 }
-                _ => println!("Unknown instruction: {:02X}{:02X}", opcode[0], opcode[1]),
+                // _ => println!("Unknown instruction: {:02X}{:02X}", opcode[0], opcode[1]),
+                _ => (),
             }
         }
 
