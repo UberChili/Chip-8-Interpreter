@@ -70,25 +70,52 @@ impl Chip8 {
             };
             self.pc += 2;
 
-            // decode instruction
-            let instruction: u16 = u16::from_be_bytes(opcode);
-            println!("Instruction at pc {:X}: {:X}", self.pc, instruction);
+            // test print instruction
+            // let instruction: u16 = u16::from_be_bytes(opcode);
+            // println!("Instruction at pc {:X}: {:X}", self.pc, instruction);
+            // println!(
+            //     "Instruction at pc {:X}: {:X} {:X}",
+            //     self.pc, &opcode[0], &opcode[1]
+            // );
+
+            // Decode the instruction
+            // Decode the instruction
+            match opcode {
+                [0x00, 0xE0] => println!("Clear screen!"),
+                [0x00, 0xEE] => println!("Return from subroutine"),
+                [first, second] if first & 0xF0 == 0x10 => {
+                    // 1NNN - Jump to address
+                    let addr = ((first as u16 & 0x0F) << 8) | second as u16;
+                    println!("Jump to address {:03X}", addr);
+                }
+                [first, second] if first & 0xF0 == 0x60 => {
+                    // 6XNN - Set VX = NN
+                    let x = (first & 0x0F) as usize;
+                    println!("Set V{:X} = {:02X}", x, second);
+                }
+                [first, second] if first & 0xF0 == 0xA0 => {
+                    // ANNN - Set I = NNN
+                    let addr = ((first as u16 & 0x0F) << 8) | second as u16;
+                    println!("Set I = {:03X}", addr);
+                }
+                _ => println!("Unknown instruction: {:02X}{:02X}", opcode[0], opcode[1]),
+            }
         }
 
         Ok(())
     }
 
-    /// Just a test function to see if we loaded contents of the rom into "memory"
-    pub fn print_memory(&self) {
-        for (index, chunk) in self.memory.chunks(16).enumerate() {
-            print!("{:04X}: ", index * 16);
-            for byte in chunk {
-                print!("{:02X} ", byte);
-            }
-            println!()
-        }
-        println!("pc: {:X}, so: {:X}", self.pc, self.memory[self.pc]);
-    }
+    // Just a test function to see if we loaded contents of the rom into "memory"
+    // pub fn print_memory(&self) {
+    //     for (index, chunk) in self.memory.chunks(16).enumerate() {
+    //         print!("{:04X}: ", index * 16);
+    //         for byte in chunk {
+    //             print!("{:02X} ", byte);
+    //         }
+    //         println!()
+    //     }
+    //     println!("pc: {:X}, so: {:X}", self.pc, self.memory[self.pc]);
+    // }
 }
 
 fn main() {
@@ -106,6 +133,6 @@ fn main() {
         }
     };
 
-    chip8_game.print_memory();
+    // chip8_game.print_memory();
     chip8_game.run().unwrap();
 }
