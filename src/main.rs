@@ -27,13 +27,14 @@ const FONTSET: [u8; 80] = [
 
 struct Chip8 {
     memory: [u8; 4096],
-    pc: usize,
-    // i: usize,
-    // stack: [u8; 16],
-    // stack: Vec<u8>,
+    pc: u16,
+    // I'm not sure what to do with the following commented fields:
+    // V: [u8; 16],
+    // i: u16,
+    // stack: [u16; 16],
+    // sp: u8,
     // delay_timer: u8,
     // sound_timer: u8,
-    // V: [u8; 16],
 }
 
 impl Chip8 {
@@ -42,6 +43,7 @@ impl Chip8 {
         let mut chip = Chip8 {
             memory: [0; 4096],
             pc: 0x200,
+            // V: [0; 16],
         };
 
         // Loading font into memory
@@ -68,28 +70,34 @@ impl Chip8 {
             if let Err(_) = reader.read_exact(&mut opcode) {
                 break;
             };
+            let opcode = ((opcode[0] as u16) << 8) | opcode[1] as u16;
             self.pc += 2;
 
             // Decode the instruction
+            // First full opcodes
             match opcode {
-                [0x00, 0xE0] => println!("Clear screen!"),
-                [0x00, 0xEE] => println!("Return from subroutine"),
-                [first, second] if first & 0xF0 == 0x10 => {
-                    // 1NNN - Jump to address
-                    let addr = ((first as u16 & 0x0F) << 8) | second as u16;
-                    println!("Jump to address {:03X}", addr);
+                0x00E0 => println!("Clear screen"),
+                0x00EE => println!("Return from subroutine"),
+                _ => (),
+            };
+
+            // Then mask-based matches
+            match opcode & 0xF000 {
+                0x6000 => {
+                    // 6XNN - Set Vx = NN
+                    println!("{:03X}", opcode);
+                    let x = ((opcode & 0x0F00) >> 8) as usize;
+                    let nn = (opcode & 0x00FF) as u8;
+                    println!("x: {}, nn: {}", x, nn);
                 }
-                [first, second] if first & 0xF0 == 0x60 => {
-                    // 6XNN - Set VX = NN
-                    let x = (first & 0x0F) as usize;
-                    println!("Set V{:X} = {:02X}", x, second);
+                0x1000 => {
+                    // 1NNN - Jump to address ?
+                    println!("{:03X}", opcode);
+                    println!("1NNN, Jump to address");
+                    let x = ((opcode & 0x0F00) >> 8) as usize;
+                    let nn = (opcode & 0x00FF) as u8;
+                    println!("x: {}, nn: {}", x, nn);
                 }
-                [first, second] if first & 0xF0 == 0xA0 => {
-                    // ANNN - Set I = NNN
-                    let addr = ((first as u16 & 0x0F) << 8) | second as u16;
-                    println!("Set I = {:03X}", addr);
-                }
-                // _ => println!("Unknown instruction: {:02X}{:02X}", opcode[0], opcode[1]),
                 _ => (),
             }
         }
