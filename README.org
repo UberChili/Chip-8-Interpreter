@@ -18,7 +18,7 @@ The ROM enters an infinite loop. This also works as expected, so we are correctl
 
 * Screenshot
 This felt so good.
-[[.Untitledshot.jpg]]
+[[Untitledshot.jpg]]
 
 * What is missing
 I still need to work on the remaining opcodes and test other ROMs. Also, the code is quite messy and not modularized at all. Need to pay attention to that.
