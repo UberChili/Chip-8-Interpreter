@@ -238,7 +238,4 @@ fn main() {
             }
         }
     }
-
-    // chip8_game.print_memory();
-    // chip8_game.run().unwrap();
 }

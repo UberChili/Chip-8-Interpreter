@@ -1,0 +1,23 @@
+* Introduction
+After completing some projects working with PNG files, I decided to keep on practicing low-level related programming. So I thought this would be an interesting project. At first I had no idea what was I doing, but it slowly unfolded.
+While I admit there's still many gaps that are still a little hard to understand, I have learnt a whole ton witht his project.
+
+
+* What works
+Currently, the interpreter can only run and display the classic IBM ROM, which you can easily find by searching /IBM logo chip8 ROM/ in Google.
+This means the interpreter is properly interpreting the following opcodes:
+
+- 00E0 - Clear the screen
+- 6xnn - Load normal register with immediate value
+- Annn - Load index register with immediate value
+- 7xnn - Add immediate value to normal register
+- Dxyn - Draw sprite to screen (un-aligned)
+
+The ROM enters an infinite loop. This also works as expected, so we are correctly interpreting the jump opcode:
+- 1nnn - Jump
+
+* Screenshot
+This felt so good.
+
+* What is missing
+I still need to work on the remaining opcodes and test other ROMs. Also, the code is quite messy and not modularized at all. Need to pay attention to that.
